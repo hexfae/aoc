@@ -46,11 +46,11 @@ pub mod part2 {
             .lines()
             .filter_map(|line| line.split_once("   "))
             .unzip();
-        let mut left: Vec<u32> = left.iter().filter_map(|str| str.parse().ok()).collect();
+
         let mut right: Vec<u32> = right.iter().filter_map(|str| str.parse().ok()).collect();
-        left.sort_unstable();
         right.sort_unstable();
-        left.into_iter()
+        left.iter()
+            .filter_map(|str| str.parse().ok())
             .map(|number| {
                 let mut times_appeared = 0;
                 if let Ok(index) = right.binary_search(&number) {

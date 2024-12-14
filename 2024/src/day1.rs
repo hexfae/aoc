@@ -1,23 +1,18 @@
 pub mod part1 {
     pub fn parse(input: &str) -> u32 {
-        let (left, right): (Vec<&str>, Vec<&str>) = input
+        let (mut left, mut right): (Vec<u32>, Vec<u32>) = input
             .lines()
             .filter_map(|line| line.split_once("   "))
+            .filter_map(|(left, right)| {
+                Some((left.parse::<u32>().ok()?, right.parse::<u32>().ok()?))
+            })
             .unzip();
-        let mut left: Vec<u32> = left.iter().filter_map(|str| str.parse().ok()).collect();
-        let mut right: Vec<u32> = right.iter().filter_map(|str| str.parse().ok()).collect();
         left.sort_unstable();
         right.sort_unstable();
         let total_distance: u32 = left
             .into_iter()
             .zip(right)
-            .map(|(left, right)| {
-                if left > right {
-                    left - right
-                } else {
-                    right - left
-                }
-            })
+            .map(|(left, right)| left.abs_diff(right))
             .sum();
         total_distance
     }
@@ -42,14 +37,14 @@ pub mod part1 {
 
 pub mod part2 {
     pub fn parse(input: &str) -> u32 {
-        let (left, right): (Vec<&str>, Vec<&str>) = input
+        let (left, mut right): (Vec<&str>, Vec<u32>) = input
             .lines()
             .filter_map(|line| line.split_once("   "))
+            .filter_map(|(left, right)| Some((left, right.parse::<u32>().ok()?)))
             .unzip();
 
-        let mut right: Vec<u32> = right.iter().filter_map(|str| str.parse().ok()).collect();
         right.sort_unstable();
-        left.iter()
+        left.into_iter()
             .filter_map(|str| str.parse().ok())
             .map(|number| {
                 let mut times_appeared = 0;
@@ -76,7 +71,6 @@ pub mod part2 {
                         }
                     }
                 }
-                // dbg!(number, times_appeared, number * times_appeared);
                 number * times_appeared
             })
             .sum()
